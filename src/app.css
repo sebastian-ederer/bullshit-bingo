@@ -148,6 +148,7 @@
 		background: oklch(0.2 0.05 278 / 0.55) !important;
 		border-color: var(--glass-border) !important;
 		box-shadow: var(--glass-highlight);
+		transform: translateZ(0);
 	}
 
 	body {
