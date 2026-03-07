@@ -56,7 +56,7 @@
 
 <HeaderBar />
 
-<main class="mx-auto max-w-[960px] min-h-dvh flex flex-col px-4 pb-20 pt-16 py-6">
+<main class="mx-auto max-w-[960px] min-h-dvh flex flex-col px-4 pb-20 py-6" style="padding-top: calc(4rem + env(safe-area-inset-top)); padding-bottom: calc(5rem + env(safe-area-inset-bottom))">
 	{@render children()}
 </main>
 

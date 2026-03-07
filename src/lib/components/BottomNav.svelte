@@ -26,7 +26,7 @@
 	}
 </script>
 
-<nav class="glass-bar fixed bottom-0 left-0 right-0 z-50 border-t">
+<nav class="glass-bar fixed bottom-0 left-0 right-0 z-50 border-t" style="padding-bottom: env(safe-area-inset-bottom)">
 	<div class="mx-auto flex h-[60px] max-w-[960px] items-center justify-around">
 		{#if activeGame.active}
 			{#each gameItems as item (item.tab)}

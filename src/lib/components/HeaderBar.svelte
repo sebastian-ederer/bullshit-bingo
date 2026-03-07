@@ -6,8 +6,8 @@
 	import CircleUser from '@lucide/svelte/icons/circle-user';
 </script>
 
-<header class="glass-bar fixed top-0 left-0 right-0 z-50 h-12 border-b">
-	<div class="mx-auto max-w-[960px] px-4 h-full flex items-center justify-between">
+<header class="glass-bar fixed top-0 left-0 right-0 z-50 border-b" style="padding-top: env(safe-area-inset-top)">
+	<div class="mx-auto max-w-[960px] px-4 h-12 flex items-center justify-between">
 		<div class="w-8">
 			{#if headerBack.value}
 				<a
