@@ -34,4 +34,4 @@ EXPOSE 3000
 
 USER app
 
-CMD ["sh", "-c", "node scripts/migrate.mjs && node scripts/seed.mjs && node build"]
+CMD ["sh", "-c", "node scripts/migrate.mjs && node build"]

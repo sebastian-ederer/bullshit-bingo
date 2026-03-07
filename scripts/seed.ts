@@ -87,8 +87,8 @@ const combos = [
 ];
 
 async function seed() {
-	const adminExists = client.prepare('SELECT 1 FROM user WHERE username = ?').get(adminUsername);
-	if (adminExists) {
+	const anyUser = client.prepare('SELECT 1 FROM user LIMIT 1').get();
+	if (anyUser) {
 		console.log('Database already seeded, skipping.');
 		client.close();
 		return;
