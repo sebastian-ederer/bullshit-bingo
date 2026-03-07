@@ -143,16 +143,18 @@
 	}
 
 	.glass-bar {
-		backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+		backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 		background: oklch(0.2 0.05 278 / 0.55) !important;
 		border-color: var(--glass-border) !important;
 		box-shadow: var(--glass-highlight);
-		transform: translateZ(0);
+		isolation: isolate;
+		will-change: backdrop-filter;
 	}
 
 	body {
 		@apply text-foreground min-h-screen font-sans antialiased;
+		isolation: isolate;
 		background-color: var(--background);
 		background-image:
 			radial-gradient(ellipse 80% 60% at 10% 90%, oklch(0.4 0.18 200 / 0.5), transparent),
