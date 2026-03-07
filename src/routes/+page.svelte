@@ -104,6 +104,7 @@
 			<PinInput
 				bind:value={pinValue}
 				maxlength={4}
+				inputmode="text"
 				onComplete={handleJoin}
 				class="justify-center"
 			/>

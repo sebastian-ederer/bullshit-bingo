@@ -266,7 +266,7 @@
 		{:else if activeGame.tab === 'scoreboard'}
 			<Scoreboard {scores} />
 		{:else if activeGame.tab === 'chat'}
-			<div class="fixed inset-0 top-12 z-10" class:bottom-[60px]={!keyboardOpen} class:bottom-0={keyboardOpen}>
+			<div class="fixed inset-x-0 z-10" style="top: calc(3rem + env(safe-area-inset-top)); bottom: {keyboardOpen ? '0px' : 'calc(60px + env(safe-area-inset-bottom))'}">
 				<div class="mx-auto max-w-[960px] h-full flex flex-col px-4">
 					<ChatPanel
 						{messages}
