@@ -1,0 +1,53 @@
+<svg width="160" height="160" viewBox="20 20 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c2d1" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#c850c0" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="gradient-glass-shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background with backdrop blur -->
+  <rect x="20" y="20" width="160" height="160" rx="40" fill="url(#gradient-bg)" style="backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)"/>
+
+  <!-- Glass shine overlay -->
+  <rect x="20" y="20" width="160" height="80" rx="40" fill="url(#gradient-glass-shine)"/>
+
+  <!-- Glassy border -->
+  <rect x="20" y="20" width="160" height="160" rx="40" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none"/>
+
+  <!-- Inner highlight -->
+  <rect x="22" y="22" width="156" height="156" rx="38" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
+
+  <!-- Grid lines - 3x3 bingo grid -->
+  <g stroke="#ffffff" stroke-width="1.5">
+    <!-- Outer border -->
+    <rect x="50" y="50" width="100" height="100" fill="none"/>
+
+    <!-- Inner vertical lines -->
+    <line x1="83.33" y1="50" x2="83.33" y2="150"/>
+    <line x1="116.67" y1="50" x2="116.67" y2="150"/>
+
+    <!-- Inner horizontal lines -->
+    <line x1="50" y1="83.33" x2="150" y2="83.33"/>
+    <line x1="50" y1="116.67" x2="150" y2="116.67"/>
+  </g>
+
+  <!-- Diagonal X marks (bottom-left to top-right) -->
+  <g stroke="rgba(255,255,255)" stroke-width="2.5" stroke-linecap="round">
+    <!-- Bottom-left cell -->
+    <line x1="58" y1="124" x2="75" y2="141"/>
+    <line x1="58" y1="141" x2="75" y2="124"/>
+
+    <!-- Middle cell -->
+    <line x1="91.5" y1="91.5" x2="108.5" y2="108.5"/>
+    <line x1="91.5" y1="108.5" x2="108.5" y2="91.5"/>
+
+    <!-- Top-right cell -->
+    <line x1="125" y1="58" x2="142" y2="75"/>
+    <line x1="125" y1="75" x2="142" y2="58"/>
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+node_modules
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+.svelte-kit
+build
+.git
+.github
+.claude
+.vscode
+*.md
