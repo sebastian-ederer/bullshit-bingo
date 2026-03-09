@@ -52,11 +52,14 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <svelte:body onpointerdown={handlePointerDown} />
 
-<Toaster richColors />
+<Toaster richColors theme="dark" />
 
 <HeaderBar />
 
-<main class="mx-auto max-w-[960px] min-h-dvh flex flex-col px-4 pb-20 py-6" style="padding-top: calc(4rem + env(safe-area-inset-top)); padding-bottom: calc(5rem + env(safe-area-inset-bottom))">
+<main
+	class="mx-auto max-w-[960px] min-h-dvh flex flex-col px-4 pb-20 py-6"
+	style="padding-top: calc(4rem + env(safe-area-inset-top)); padding-bottom: calc(5rem + env(safe-area-inset-bottom))"
+>
 	{@render children()}
 </main>
 
