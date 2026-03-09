@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { gameSession, gamePlayer, gameResult } from '$lib/server/db/schema';
+import { gameSession, gamePlayer, gameResult, chatMessage } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { broadcast } from '$lib/server/sse';
 import { getGamePlayers } from '$lib/server/db/queries';
@@ -71,6 +71,8 @@ export async function endGame(gameId: string): Promise<{ error?: string }> {
 			score: p.score
 		}))
 	});
+
+	await db.delete(chatMessage).where(eq(chatMessage.gameId, gameId));
 
 	return {};
 }

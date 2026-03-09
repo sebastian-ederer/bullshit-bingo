@@ -112,7 +112,7 @@ export const gamePlayer = sqliteTable(
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id),
-		deckId: text('deck_id').references(() => playerDeck.id),
+		deckId: text('deck_id').references(() => playerDeck.id, { onDelete: 'set null' }),
 		card: text('card', { mode: 'json' }).$type<string[]>(),
 		marks: text('marks', { mode: 'json' })
 			.notNull()
