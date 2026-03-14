@@ -15,7 +15,7 @@
 <div>
 	<h1 class="text-2xl font-bold mb-6">Global Leaderboard</h1>
 
-	{#if data.leaderboard.length === 0}
+	{#if data.leaderboard.length === 0 && !data.currentUserEntry}
 		<p class="text-muted-foreground italic mt-4 text-center">
 			No completed games yet. Play some games to see the leaderboard!
 		</p>
@@ -32,7 +32,9 @@
 				</Table.Header>
 				<Table.Body>
 					{#each data.leaderboard as entry, i (entry.userId)}
-						<Table.Row class={i < 3 ? 'font-semibold' : ''}>
+						<Table.Row
+							class="{i < 3 ? 'font-semibold' : ''} {entry.userId === data.currentUserId ? 'bg-muted/50' : ''}"
+						>
 							<Table.Cell class="text-center">
 								{#if i < 3}
 									<Badge
@@ -50,6 +52,18 @@
 							<Table.Cell>{entry.gamesPlayed}</Table.Cell>
 						</Table.Row>
 					{/each}
+					{#if data.currentUserEntry}
+						<Table.Row class="border-t-2 border-dashed bg-muted/50">
+							<Table.Cell class="text-center text-muted-foreground">
+								{data.currentUserEntry.rank}
+							</Table.Cell>
+							<Table.Cell>{data.currentUserEntry.username}</Table.Cell>
+							<Table.Cell class="text-primary font-semibold"
+								>{data.currentUserEntry.totalScore}</Table.Cell
+							>
+							<Table.Cell>{data.currentUserEntry.gamesPlayed}</Table.Cell>
+						</Table.Row>
+					{/if}
 				</Table.Body>
 			</Table.Root>
 		</div>

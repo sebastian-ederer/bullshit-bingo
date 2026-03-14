@@ -140,7 +140,7 @@ The leaderboard shows cumulative scores across all finished games. It displays:
 - **Total score** (sum of all game scores)
 - **Games played**
 
-The top 50 players are shown, sorted by total score.
+The top 50 players are shown, sorted by total score. If you're not in the top 50, your own rank is always displayed at the bottom of the table so you can see where you stand.
 
 ## Admin Panel
 
