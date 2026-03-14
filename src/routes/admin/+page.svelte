@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>Card Manager - Attention Bingo</title>
+	<title>Card Manager - {data.appName}</title>
 </svelte:head>
 
 <div>

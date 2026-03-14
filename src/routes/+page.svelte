@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-	<title>Attention Bingo</title>
+	<title>{data.appName}</title>
 </svelte:head>
 <div class="flex flex-col items-center gap-6 text-center">
 	<h1

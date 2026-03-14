@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -15,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>Register - Attention Bingo</title>
+	<title>Register - {page.data.appName}</title>
 </svelte:head>
 
 <div class="mt-8">

@@ -196,7 +196,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.game.name} - Attention Bingo</title>
+	<title>{data.game.name} - {data.appName}</title>
 </svelte:head>
 
 <div class="relative flex-1 flex flex-col">

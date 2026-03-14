@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Leaderboard - Attention Bingo</title>
+	<title>Leaderboard - {data.appName}</title>
 </svelte:head>
 
 <div>

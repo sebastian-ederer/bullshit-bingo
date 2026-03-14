@@ -6,6 +6,8 @@
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import Check from '@lucide/svelte/icons/check';
 
+	import { page } from '$app/state';
+
 	let { code }: { code: string } = $props();
 
 	let canShare = $state(false);
@@ -41,8 +43,8 @@
 	async function shareCode() {
 		try {
 			await navigator.share({
-				title: 'Attention Bingo',
-				text: `Join my Bingo game! Code: ${code}`
+				title: page.data.appName,
+				text: `${code}`
 			});
 		} catch (e) {
 			if ((e as DOMException).name !== 'AbortError') {

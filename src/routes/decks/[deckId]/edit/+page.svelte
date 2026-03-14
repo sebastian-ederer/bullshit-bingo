@@ -36,7 +36,7 @@
 </script>
 
 <svelte:head>
-	<title>Edit Deck - Attention Bingo</title>
+	<title>Edit Deck - {data.appName}</title>
 </svelte:head>
 
 <div>

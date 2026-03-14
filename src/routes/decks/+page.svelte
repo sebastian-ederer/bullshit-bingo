@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-	<title>My Decks - Attention Bingo</title>
+	<title>My Decks - {data.appName}</title>
 </svelte:head>
 
 <div>
