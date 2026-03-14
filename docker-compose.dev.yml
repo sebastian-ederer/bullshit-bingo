@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/sebastian-ederer/bullshit-bingo:latest
+    build: .
     expose:
       - '3000'
     restart: unless-stopped
