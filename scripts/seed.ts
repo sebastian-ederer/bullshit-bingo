@@ -26,25 +26,38 @@ const auth = betterAuth({
 });
 
 async function seed() {
-	const anyUser = client.prepare('SELECT 1 FROM user LIMIT 1').get();
-	if (anyUser) {
-		console.log('Database already seeded, skipping.');
+	const existingAdmin = client
+		.prepare("SELECT 1 FROM user WHERE role = 'admin' LIMIT 1")
+		.get();
+
+	if (existingAdmin) {
+		console.log('Admin user already exists, skipping.');
 		client.close();
 		return;
 	}
 
 	console.log(`Creating admin user "${adminUsername}"...`);
-	const result = await auth.api.signUpEmail({
-		body: {
-			username: adminUsername,
-			email: `${adminUsername}@bingo.local`,
-			password: adminPassword,
-			name: adminUsername
+	try {
+		const result = await auth.api.signUpEmail({
+			body: {
+				username: adminUsername,
+				email: `${adminUsername}@bingo.local`,
+				password: adminPassword,
+				name: adminUsername
+			}
+		});
+		client.prepare('UPDATE user SET role = ? WHERE id = ?').run('admin', result.user.id);
+	} catch (e: unknown) {
+		const msg = e instanceof Error ? e.message : String(e);
+		if (msg.includes('UNIQUE') || msg.includes('already')) {
+			console.log(`User "${adminUsername}" already exists, promoting to admin...`);
+			client.prepare('UPDATE user SET role = ? WHERE username = ?').run('admin', adminUsername);
+		} else {
+			throw e;
 		}
-	});
-	client.prepare('UPDATE user SET role = ? WHERE id = ?').run('admin', result.user.id);
-	console.log(`Admin user "${adminUsername}" created with role "admin".`);
+	}
 
+	console.log(`Admin user "${adminUsername}" created with role "admin".`);
 	client.close();
 	console.log('Seed complete!');
 }
