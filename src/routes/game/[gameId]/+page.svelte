@@ -17,6 +17,7 @@
 	import FormError from '$lib/components/FormError.svelte';
 	import Confetti from '$lib/components/Confetti.svelte';
 	import { useSubmitting } from '$lib/stores/submitting.svelte';
+	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 
 	let { data, form } = $props();
 	let canControl = $derived(data.isOwner || data.isAdmin);
@@ -38,6 +39,7 @@
 	let keyboardOpen = $state(false);
 	const startGame = useSubmitting();
 	const endGame = useSubmitting();
+	const restartGameSubmit = useSubmitting();
 
 	$effect(() => {
 		const vv = window.visualViewport;
@@ -106,6 +108,12 @@
 				gameStatus = 'finished';
 				scores = mergeScores(d.finalScores);
 				activeGame.active = false;
+				debouncedInvalidate();
+			},
+			game_restarted() {
+				gameStatus = 'lobby';
+				activeGame.active = false;
+				activeGame.tab = 'game';
 				debouncedInvalidate();
 			}
 		});
@@ -195,10 +203,12 @@
 	<FormError error={form?.error} />
 
 	{#if joined && gameStatus !== 'finished' && activeGame.tab !== 'chat'}
-		<div class="flex justify-end gap-2 mb-4">
+		<div class="sticky top-0 z-10 flex justify-end gap-2 mb-4 py-2">
 			{#if canControl && gameStatus === 'active'}
 				<form method="POST" action="?/end" use:enhance={endGame.enhance}>
-					<Button type="submit" variant="outline" size="sm" disabled={endGame.submitting}>End Game</Button>
+					<Button type="submit" variant="outline" size="sm" disabled={endGame.submitting}
+						>End Game</Button
+					>
 				</form>
 			{/if}
 			<Button variant="outline" size="sm" onclick={leaveGame} disabled={leaving}>
@@ -230,7 +240,9 @@
 						<Select.Content>
 							{#each data.userDecks as deck (deck.id)}
 								<Select.Item value={deck.id} disabled={deck.validPhraseCount !== 9}>
-									{deck.name}{deck.validPhraseCount !== 9 ? ` (${deck.validPhraseCount}/9 cards)` : ''}
+									{deck.name}{deck.validPhraseCount !== 9
+										? ` (${deck.validPhraseCount}/9 cards)`
+										: ''}
 								</Select.Item>
 							{/each}
 						</Select.Content>
@@ -239,7 +251,9 @@
 				{#if data.isOwner}
 					<form method="POST" action="?/start" use:enhance={startGame.enhance} class="mb-6">
 						<input type="hidden" name="deckId" value={selectedDeckId} />
-						<Button type="submit" size="lg" disabled={!selectedDeckId || startGame.submitting}>Start Game</Button>
+						<Button type="submit" size="lg" disabled={!selectedDeckId || startGame.submitting}
+							>Start Game</Button
+						>
 					</form>
 				{:else}
 					<Button onclick={joinGame} disabled={joining || !selectedDeckId} size="lg" class="mb-6">
@@ -253,20 +267,40 @@
 			{/if}
 		</div>
 	{:else if gameStatus === 'lobby'}
-		<GameLobby code={data.game.code} players={lobbyPlayers} />
+		<GameLobby code={data.game.code} players={lobbyPlayers}>
+			{#snippet actions()}
+				{#if canControl}
+					<form method="POST" action="?/start" use:enhance={startGame.enhance}>
+						<Button type="submit" size="lg" disabled={startGame.submitting}>Start Game</Button>
+					</form>
+				{/if}
+			{/snippet}
+		</GameLobby>
 	{:else if gameStatus === 'active'}
 		{#if activeGame.tab === 'game'}
 			<div class="flex-1 flex items-center justify-center">
 				<BingoCard
-					phrases={data.cardPhrases.map((p) => ({ id: p.id, text: p.title, subtitle: p.subtitle, points: p.basePoints }))}
+					phrases={data.cardPhrases.map((p) => ({
+						id: p.id,
+						text: p.title,
+						subtitle: p.subtitle,
+						points: p.basePoints
+					}))}
 					{marks}
 					onmark={markCell}
 				/>
 			</div>
 		{:else if activeGame.tab === 'scoreboard'}
-			<Scoreboard {scores} />
+			<div class="flex-1 flex flex-col min-h-0">
+				<Scoreboard {scores} />
+			</div>
 		{:else if activeGame.tab === 'chat'}
-			<div class="fixed inset-x-0 z-10" style="top: calc(3rem + env(safe-area-inset-top)); bottom: {keyboardOpen ? '0px' : 'calc(60px + env(safe-area-inset-bottom))'}">
+			<div
+				class="fixed inset-x-0 z-10"
+				style="top: calc(3rem + env(safe-area-inset-top)); bottom: {keyboardOpen
+					? '0px'
+					: 'calc(60px + env(safe-area-inset-bottom))'}"
+			>
 				<div class="mx-auto max-w-[960px] h-full flex flex-col px-4">
 					<ChatPanel
 						{messages}
@@ -280,14 +314,29 @@
 	{:else if gameStatus === 'finished'}
 		<Confetti />
 		<div
-			class="fixed inset-0 bg-background/95 z-[200] flex items-center justify-center animate-in fade-in"
+			class="fixed inset-0 bg-background/95 z-[200] flex justify-center overflow-y-auto animate-in fade-in"
 		>
-			<div class="text-center max-w-[500px] w-full p-8">
+			<div class="text-center max-w-[500px] w-full p-8 my-auto">
 				<h1 class="text-4xl font-bold mb-8">Game Over!</h1>
-				<div class="max-w-[400px] mx-auto mb-8">
+				<div class="flex gap-3 justify-center mb-8">
+					<Button href="/" size="lg">Back to Home</Button>
+					{#if data.dev && canControl}
+						<form method="POST" action="?/restart" use:enhance={restartGameSubmit.enhance}>
+							<Button
+								type="submit"
+								variant="outline"
+								size="lg"
+								disabled={restartGameSubmit.submitting}
+							>
+								<RotateCcw class="size-4" />
+								Restart
+							</Button>
+						</form>
+					{/if}
+				</div>
+				<div class="max-w-[400px] mx-auto">
 					<Scoreboard {scores} />
 				</div>
-				<Button href="/" size="lg">Back to Home</Button>
 			</div>
 		</div>
 	{/if}

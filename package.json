@@ -21,7 +21,8 @@
 		"db:migrate": "node scripts/migrate.mjs",
 		"db:studio": "drizzle-kit studio",
 		"auth:schema": "npx @better-auth/cli generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes",
-		"db:seed": "npx tsx scripts/seed.ts"
+		"db:seed": "npx tsx scripts/seed.ts",
+		"db:seed-game": "npx tsx scripts/seed-game.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",

@@ -7,10 +7,11 @@ import {
 	chatMessage,
 	playerDeck
 } from '$lib/server/db/schema';
+import { dev } from '$app/environment';
 import { eq, and, inArray } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { getValidPhraseIdSet, getGamePlayers, requireGameOwnerOrAdmin, findPlayerInGame } from '$lib/server/db/queries';
-import { startGame, endGame } from '$lib/server/game/actions';
+import { startGame, endGame, restartGame } from '$lib/server/game/actions';
 import { displayName } from '$lib/types';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -131,7 +132,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			message: m.message,
 			timestamp: m.createdAt ? new Date(m.createdAt).getTime() : Date.now()
 		})),
-		userDecks
+		userDecks,
+		dev
 	};
 };
 
@@ -185,6 +187,18 @@ export const actions: Actions = {
 		if (authError) return fail(403, { error: authError });
 
 		const result = await endGame(params.gameId);
+		if (result.error) return fail(400, { error: result.error });
+
+		return { success: true };
+	},
+
+	restart: async ({ params, locals }) => {
+		if (!locals.user) throw redirect(303, '/login');
+
+		const authError = await requireGameOwnerOrAdmin(params.gameId, locals.user.id, locals.user.role);
+		if (authError) return fail(403, { error: authError });
+
+		const result = await restartGame(params.gameId);
 		if (result.error) return fail(400, { error: result.error });
 
 		return { success: true };

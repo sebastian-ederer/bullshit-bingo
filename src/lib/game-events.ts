@@ -10,6 +10,7 @@ export interface GameEventHandlers {
 	game_ended?: (data: { finalScores: { username: string; score: number }[] }) => void;
 	score_update?: (data: { scores: { username: string; score: number }[] }) => void;
 	combo_completed?: (data: { username: string; comboName: string; points: number }) => void;
+	game_restarted?: (data: Record<string, never>) => void;
 	chat?: (data: { userId?: string; username: string; message: string; timestamp: number }) => void;
 }
 
