@@ -12,6 +12,10 @@ A real-time multiplayer bingo game. Create custom bingo decks, host game session
 - **Admin panel** -- Manage games, players, and card collections
 - **PWA support** -- Install as an app on your device
 
+## Documentation
+
+- [**User Guide**](docs/guide.md) - How to play, create decks, host games, and use combos.
+
 ## Getting Started
 
 ### Prerequisites
