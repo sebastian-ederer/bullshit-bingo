@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 	const game = await findGameStatus(params.gameId);
 	if (!game) return json({ error: 'Not found' }, { status: 404 });
 	if (game.createdBy !== locals.user.id) return json({ error: 'Forbidden' }, { status: 403 });
-	if (game.status === 'finished') return json({ error: 'Game already finished' }, { status: 400 });
+	if (game.status !== 'lobby') return json({ error: 'Can only abandon lobby games' }, { status: 400 });
 
 	await db
 		.delete(gameSession)

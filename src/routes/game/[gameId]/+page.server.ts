@@ -10,7 +10,7 @@ import {
 import { dev } from '$app/environment';
 import { eq, and, inArray } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { getValidPhraseIdSet, getGamePlayers, requireGameOwnerOrAdmin, findPlayerInGame } from '$lib/server/db/queries';
+import { getValidPhraseIdSet, getGamePlayers, requireGameOwnerOrAdmin, findPlayerInGame, findGameStatus } from '$lib/server/db/queries';
 import { startGame, endGame, restartGame } from '$lib/server/game/actions';
 import { displayName } from '$lib/types';
 import type { Actions, PageServerLoad } from './$types';
@@ -141,8 +141,9 @@ export const actions: Actions = {
 	start: async ({ params, locals, request }) => {
 		if (!locals.user) throw redirect(303, '/login');
 
-		const authError = await requireGameOwnerOrAdmin(params.gameId, locals.user.id, locals.user.role);
-		if (authError) return fail(403, { error: authError });
+		const game = await findGameStatus(params.gameId);
+		if (!game) return fail(404, { error: 'Game not found' });
+		if (game.createdBy !== locals.user.id) return fail(403, { error: 'Only the host can start the game.' });
 
 		// Auto-join owner as player if not already joined
 		const existingPlayer = await findPlayerInGame(params.gameId, locals.user.id);

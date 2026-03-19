@@ -24,12 +24,12 @@
 	type="button"
 	class="aspect-square min-h-[80px] flex flex-col items-center justify-center text-center p-2 text-sm leading-tight break-words border-2 rounded-md transition-all gap-0.5
 		{marked
-		? 'bg-primary border-primary text-primary-foreground cursor-default'
+		? 'bg-primary border-primary text-primary-foreground cursor-pointer active:scale-95'
 		: 'bg-card border-border text-foreground hover:border-primary'}
 		{disabled && !marked ? 'opacity-60 cursor-not-allowed' : ''}
 		{!disabled && !marked ? 'cursor-pointer active:scale-95' : ''}
 		{className}"
-	{disabled}
+	disabled={disabled && !marked}
 	{onclick}
 >
 	<span class="font-medium">{title}</span>

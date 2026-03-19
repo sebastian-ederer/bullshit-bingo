@@ -34,3 +34,38 @@ export function calculateMarkScore(
 
 	return { pointsEarned, newCombos };
 }
+
+/**
+ * Recalculate total score and active combos from scratch based on current marks.
+ * Used when a player unmarks a cell.
+ */
+export function recalculateScore(
+	markedPhraseIds: string[],
+	cardPhraseIds: string[],
+	combos: ComboData[],
+	phrasePointsMap: Map<string, number>
+): { totalScore: number; activeComboIds: string[] } {
+	let totalScore = 0;
+	const activeComboIds: string[] = [];
+	const markedSet = new Set(markedPhraseIds);
+	const cardSet = new Set(cardPhraseIds);
+
+	// Sum base points for all marked phrases
+	for (const phraseId of markedPhraseIds) {
+		totalScore += phrasePointsMap.get(phraseId) ?? 0;
+	}
+
+	// Check which combos are still completed
+	for (const combo of combos) {
+		const allOnCard = combo.phraseIds.every((pid) => cardSet.has(pid));
+		if (!allOnCard) continue;
+
+		const allMarked = combo.phraseIds.every((pid) => markedSet.has(pid));
+		if (!allMarked) continue;
+
+		totalScore += combo.bonusPoints;
+		activeComboIds.push(combo.id);
+	}
+
+	return { totalScore, activeComboIds };
+}

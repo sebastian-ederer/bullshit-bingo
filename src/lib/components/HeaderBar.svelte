@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { headerBack } from '$lib/stores/headerBack.svelte';
+	import { activeGame } from '$lib/stores/activeGame.svelte';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import CircleUser from '@lucide/svelte/icons/circle-user';
@@ -19,12 +20,14 @@
 			{/if}
 		</div>
 
-		<a href={page.data.user ? '/profile' : '/login'}>
-			<Avatar.Root class="bg-white/10 backdrop-blur-lg">
-				<Avatar.Fallback class="bg-transparent">
-					<CircleUser class="size-5 text-primary" />
-				</Avatar.Fallback>
-			</Avatar.Root>
-		</a>
+		{#if !activeGame.active}
+			<a href={page.data.user ? '/profile' : '/login'}>
+				<Avatar.Root class="bg-white/10 backdrop-blur-lg">
+					<Avatar.Fallback class="bg-transparent">
+						<CircleUser class="size-5 text-primary" />
+					</Avatar.Fallback>
+				</Avatar.Root>
+			</a>
+		{/if}
 	</div>
 </header>

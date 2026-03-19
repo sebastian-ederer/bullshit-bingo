@@ -120,7 +120,7 @@
 	}
 
 	function shouldAbandon(): boolean {
-		return data.isOwner && gameStatus !== 'finished';
+		return data.isOwner && gameStatus === 'lobby' && !intentionalLeave;
 	}
 
 	function abandonGame() {
@@ -163,9 +163,11 @@
 	}
 
 	let leaving = $state(false);
+	let intentionalLeave = $state(false);
 
 	async function leaveGame() {
 		leaving = true;
+		intentionalLeave = true;
 		try {
 			const res = await fetch(`/api/game/${data.game.id}/leave`, { method: 'POST' });
 			if (res.ok) goto('/');
@@ -248,7 +250,7 @@
 						</Select.Content>
 					</Select.Root>
 				</div>
-				{#if data.isOwner}
+				{#if data.isOwner && gameStatus === 'lobby'}
 					<form method="POST" action="?/start" use:enhance={startGame.enhance} class="mb-6">
 						<input type="hidden" name="deckId" value={selectedDeckId} />
 						<Button type="submit" size="lg" disabled={!selectedDeckId || startGame.submitting}
@@ -269,7 +271,7 @@
 	{:else if gameStatus === 'lobby'}
 		<GameLobby code={data.game.code} players={lobbyPlayers}>
 			{#snippet actions()}
-				{#if canControl}
+				{#if data.isOwner}
 					<form method="POST" action="?/start" use:enhance={startGame.enhance}>
 						<Button type="submit" size="lg" disabled={startGame.submitting}>Start Game</Button>
 					</form>

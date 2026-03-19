@@ -1,8 +1,8 @@
 import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { topicPhrase, chatMessage, gamePlayer } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
-import { calculateMarkScore } from '$lib/server/game/scoring';
+import { eq, inArray } from 'drizzle-orm';
+import { calculateMarkScore, recalculateScore } from '$lib/server/game/scoring';
 import { broadcast } from '$lib/server/sse';
 import { loadCombosWithFields, getGamePlayers, findPlayerInGame, findGameStatus } from '$lib/server/db/queries';
 import { displayName } from '$lib/types';
@@ -27,12 +27,53 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 	const marks = player.marks as number[];
 	const cardPhraseIds = player.card as string[];
+	const isUnmarking = marks.includes(cellIndex);
 
-	if (marks.includes(cellIndex)) {
-		return json({ marks, score: player.score, newCombos: [] });
+	const comboData = await loadCombosWithFields();
+
+	if (isUnmarking) {
+		// Remove the mark
+		const newMarks = marks.filter((m) => m !== cellIndex);
+		const markedPhraseIds = newMarks.map((i) => cardPhraseIds[i]);
+
+		// Load base points for all marked phrases
+		const phrases = markedPhraseIds.length > 0
+			? await db
+				.select({ id: topicPhrase.id, basePoints: topicPhrase.basePoints })
+				.from(topicPhrase)
+				.where(inArray(topicPhrase.id, markedPhraseIds))
+			: [];
+		const phrasePointsMap = new Map(phrases.map((p) => [p.id, p.basePoints]));
+
+		const { totalScore, activeComboIds } = recalculateScore(
+			markedPhraseIds,
+			cardPhraseIds,
+			comboData,
+			phrasePointsMap
+		);
+
+		await db
+			.update(gamePlayer)
+			.set({
+				marks: newMarks,
+				scoredPatterns: activeComboIds,
+				score: totalScore
+			})
+			.where(eq(gamePlayer.id, player.id));
+
+		// Broadcast updated scoreboard
+		const allPlayers = await getGamePlayers(params.gameId);
+		broadcast(params.gameId, 'score_update', {
+			scores: allPlayers.map((p) => ({
+				username: displayName(p),
+				score: p.score
+			}))
+		});
+
+		return json({ marks: newMarks, score: totalScore, newCombos: [] });
 	}
 
-	// Get the phrase being marked
+	// Marking a new cell
 	const markedPhraseId = cardPhraseIds[cellIndex];
 	const phrase = await db
 		.select({ basePoints: topicPhrase.basePoints })
@@ -41,9 +82,6 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		.get();
 
 	const fieldBasePoints = phrase?.basePoints ?? 0;
-
-	// Get all combos (global now, no pool filtering)
-	const comboData = await loadCombosWithFields();
 
 	const newMarks = [...marks, cellIndex];
 	const allMarkedPhraseIds = newMarks.map((i) => cardPhraseIds[i]);

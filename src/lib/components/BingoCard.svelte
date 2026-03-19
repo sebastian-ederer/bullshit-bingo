@@ -21,7 +21,7 @@
 			subtitle={phrase.subtitle}
 			points={phrase.points}
 			{marked}
-			disabled={disabled || marked}
+			{disabled}
 			onclick={() => onmark?.(i)}
 		/>
 	{/each}
