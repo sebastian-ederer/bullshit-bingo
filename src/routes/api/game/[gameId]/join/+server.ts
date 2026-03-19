@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { gamePlayer, playerDeck } from '$lib/server/db/schema';
+import { gamePlayer, gameSession, playerDeck } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { broadcast } from '$lib/server/sse';
 import { getValidPhraseIdSet, findPlayerInGame, findGameStatus } from '$lib/server/db/queries';
@@ -61,6 +61,19 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 			score: 0
 		})
 		.returning();
+
+	// If this joiner is the only player in an active game, they become the new host.
+	// This handles the case where everyone left an active game and someone rejoins.
+	// In lobby, the creator is always the host (they join as a player on game start).
+	if (game.status === 'active') {
+		const playerCount = await db.$count(gamePlayer, eq(gamePlayer.gameId, params.gameId));
+		if (playerCount === 1) {
+			await db
+				.update(gameSession)
+				.set({ createdBy: locals.user.id })
+				.where(eq(gameSession.id, params.gameId));
+		}
+	}
 
 	broadcast(params.gameId, 'player_joined', {
 		username: displayName(locals.user)

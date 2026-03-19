@@ -138,6 +138,12 @@
 		return () => {
 			connection?.close();
 			if (debounceTimer) clearTimeout(debounceTimer);
+		};
+	});
+
+	// Reset active game state when leaving the page (component teardown)
+	$effect(() => {
+		return () => {
 			activeGame.active = false;
 			activeGame.tab = 'game';
 		};

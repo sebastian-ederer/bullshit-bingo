@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 		.delete(gamePlayer)
 		.where(and(eq(gamePlayer.gameId, params.gameId), eq(gamePlayer.userId, locals.user.id)));
 
-	// If leaving user is the owner, transfer or delete
+	// If leaving user is the owner, transfer ownership to next player
 	if (game.createdBy === locals.user.id) {
 		const nextPlayer = await db
 			.select({ userId: gamePlayer.userId })
@@ -34,10 +34,9 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 				.update(gameSession)
 				.set({ createdBy: nextPlayer.userId })
 				.where(eq(gameSession.id, params.gameId));
-		} else {
-			await db.delete(gameSession).where(eq(gameSession.id, params.gameId));
-			return json({ success: true });
 		}
+		// If no players remain, keep the session alive —
+		// the next user to join will become the new host.
 	}
 
 	broadcast(params.gameId, 'player_left', {
